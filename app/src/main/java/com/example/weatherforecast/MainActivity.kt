@@ -1,6 +1,8 @@
 package com.example.weatherforecast
+import com.example.weatherforecast.BuildConfig
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -12,48 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.json.JSONObject
-import java.net.URL
-
-data class WeatherData(
-    val temperature: String,
-    val humidity: String,
-    val windSpeed: String,
-    val condition: String,
-    val icon: String
-)
-
-class WeatherService(private val apiKey: String) {
-
-    suspend fun fetchWeather(city: String): WeatherData? {
-        return withContext(Dispatchers.IO) {
-            try {
-                val url = "https://api.openweathermap.org/data/2.5/weather?q=$city&units=metric&appid=$apiKey"
-                val response = URL(url).readText(Charsets.UTF_8)
-                parseWeather(response)
-            } catch (e: Exception) {
-                null
-            }
-        }
-    }
-
-    private fun parseWeather(jsonResponse: String): WeatherData {
-        val jsonObj = JSONObject(jsonResponse)
-        val main = jsonObj.getJSONObject("main")
-        val wind = jsonObj.getJSONObject("wind")
-        val weatherJson = jsonObj.getJSONArray("weather").getJSONObject(0)
-        val temperature = "${main.getString("temp")}° C"
-        val humidity = "${main.getString("humidity")}%"
-        val windSpeed = "${wind.getString("speed")} km/h"
-        val condition = weatherJson.getString("main")
-        val icon = weatherJson.getString("icon")
-
-        return WeatherData(temperature, humidity, windSpeed, condition, icon)
-    }
-}
 
 class MainActivity : AppCompatActivity() {
 
@@ -91,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var city: String = "London"
-    private val apiKey: String = ""
+    private val apiKey: String = BuildConfig.API_KEY
     private lateinit var weatherService: WeatherService
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,7 +76,8 @@ class MainActivity : AppCompatActivity() {
         conditionImage = findViewById(R.id.imgCondition)
         cityEdit = findViewById(R.id.editTextCity)
         changeCityButton = findViewById(R.id.btnChangeCity)
-
+        Log.d("API_KEY_CHECK", "API Key: $apiKey")
+        weatherService = WeatherService(apiKey)
         weatherService = WeatherService(apiKey)
 
         loadWeather()

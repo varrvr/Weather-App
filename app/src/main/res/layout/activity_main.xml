@@ -174,7 +174,7 @@
             android:hint="Enter your city"
             android:minHeight="48dp"
             android:padding="8dp"
-            android:textColorHint="@drawable/humidity"
+            android:textColorHint="@color/black"
             android:textSize="23sp" />
 
         <com.google.android.material.button.MaterialButton
