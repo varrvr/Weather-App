@@ -24,6 +24,7 @@ class WeatherService(private val apiKey: String) {
         val main = jsonObj.getJSONObject("main")
         val wind = jsonObj.getJSONObject("wind")
         val weatherJson = jsonObj.getJSONArray("weather").getJSONObject(0)
+
         val temperature = "${main.getString("temp")}° C"
         val humidity = "${main.getString("humidity")}%"
         val windSpeed = "${wind.getString("speed")} km/h"
